@@ -7,12 +7,14 @@ from typing import List, Tuple, Union
 class ConvNN(pl.LightningModule):
     def __init__(
         self,
-        input_shape: Tuple[int, int, int] = (3, 800, 800),
+        input_shape: Tuple[int, int, int] = (3, 256, 256),
         num_filters: List[int] = [32, 64, 128, 256, 512],
         kernel_sizes: List[int] = [3, 3, 3, 3, 3],
         conv_activations: Union[List[str], str] = "ReLU",
         dense_neurons: int = 512,
         dense_activation: str = "ReLU",
+        batch_normalization: bool = False,
+        drop_out: float = 0.0,
         learning_rate: float = 1e-3,
     ):
         super().__init__()
@@ -45,7 +47,10 @@ class ConvNN(pl.LightningModule):
                     padding=padding
                 )
             )
+            if batch_normalization:
+                self.conv_blocks.append(nn.BatchNorm2d(num_filters[i]))
             self.conv_blocks.append(getattr(nn, conv_activations[i])())
+            self.conv_blocks.append(nn.Dropout2d(drop_out))
             self.conv_blocks.append(nn.MaxPool2d(kernel_size=2, stride=2))
             in_channels = num_filters[i]
 
@@ -58,7 +63,9 @@ class ConvNN(pl.LightningModule):
         # Build dense layers
         self.dense = nn.Sequential(
             nn.Linear(flattened_size, dense_neurons),
+            nn.BatchNorm1d(dense_neurons) if batch_normalization else nn.Identity(),
             getattr(nn, dense_activation)(),
+            nn.Dropout(drop_out),
             nn.Linear(dense_neurons, 10)
         )
 
