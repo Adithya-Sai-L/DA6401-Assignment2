@@ -15,7 +15,8 @@ class ConvNN(pl.LightningModule):
         dense_activation: str = "ReLU",
         batch_normalization: bool = False,
         drop_out: float = 0.0,
-        learning_rate: float = 1e-3,
+        optimizer: str = 'Adam',
+        learning_rate: float = 1e-3
     ):
         super().__init__()
         self.save_hyperparameters()
@@ -71,6 +72,7 @@ class ConvNN(pl.LightningModule):
 
         # Loss function and metrics
         self.loss_fn = nn.CrossEntropyLoss()
+        self.optimizer = optimizer
         self.learning_rate = learning_rate
 
     def forward(self, x):
@@ -80,7 +82,7 @@ class ConvNN(pl.LightningModule):
         return x
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+        return getattr(torch.optim, self.optimizer)(self.parameters(), lr=self.learning_rate)
     
     def training_step(self, batch, batch_idx):
         x, y = batch
