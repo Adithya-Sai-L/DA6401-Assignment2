@@ -37,7 +37,7 @@ class ConvNN(pl.LightningModule):
         in_channels = input_shape[0]
         
         for i in range(5):
-            # Calculate padding to maintain spatial dimensions before pooling
+            # Calculate padding to maintain spatial dimensions before pooling ie. same padding
             padding = (kernel_sizes[i] - 1) // 2
             
             self.conv_blocks.append(

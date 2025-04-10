@@ -2,7 +2,8 @@ sweep_config = {
     'method': 'bayes',
     'metric': {'name': 'val_acc', 'goal': 'maximize'},
     'parameters': {
-        'num_filters': {'values': [[32]*5, [64]*5, [16, 32, 64, 128, 256], [256, 128, 64, 32, 16]]},
+        'num_filters': {'values': [[32]*5, [64]*5, [128]*5, [16, 32, 64, 128, 256], [256, 128, 64, 32, 16]]},
+        'kernel_sizes': {'values': [[3]*5, [5]*5, [7]*5, [3, 5, 7, 5, 3], [7, 5, 3, 5, 7]]},
         'conv_activation': {'values': ['ReLU', 'GELU', 'SiLU', 'Mish']},
         'dense_activation': {'values': ['ReLU', 'Sigmoid', 'Tanh']},
         'dense_neurons': {'values': [512, 256, 128]},
